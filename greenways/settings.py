@@ -24,18 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ax6^id&mx_37&&seaziee_d!29dr!_#4h@h2z!z^0hlvocpz5g'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = FALSE
+DEBUG = development
 
-ALLOWED_HOSTS = ['ci-greenways.herokuapp.com']
+ALLOWED_HOSTS = [os.environ.get('HEROKU_HOSTNAME')]
 
-ALLOWED_HOSTS = [
-    #'8000-ocassidydev-greenways-a1rwyegoqws.ws-eu104.gitpod.io',
-    #'8000-ocassidydev-greenways-y13chb6125k.ws-eu104.gitpod.io',
-    'ci-greenways-a76ef9e9c4a6.herokuapp.com'
-    ]
+development = os.environ.get('DEVELOPMENT', False)
 
 
 # Application definition
@@ -85,16 +81,19 @@ WSGI_APPLICATION = 'greenways.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#   }
-#}
+if development:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
 
-DATABASES = {
-   'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-}
+
 
 
 
